@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
   GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
   LinkedinStrategy = require('passport-linkedin').Strategy,
   SlackStrategy = require('passport-slack').Strategy,
+  SamlStrategy = require('passport-saml').Strategy,
   User = mongoose.model('User'),
   config = require('meanio').getConfig();
   // PlatformSetting = mongoose.model('PlatformSetting');
@@ -17,17 +18,21 @@ var mongoose = require('mongoose'),
 module.exports = function(passport) {
   // Serialize the user id to push into the session
   passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    done(null, user);
   });
 
   // Deserialize the user object based on a pre-serialized token
   // which is the user id
-  passport.deserializeUser(function(id, done) {
-    User.findOne({
-      _id: id
-    }, '-salt -hashed_password', function(err, user) {
-      done(err, user);
-    });
+  passport.deserializeUser(function(user, done) {
+    if(user.id){
+      User.findOne({
+        _id: id
+      }, '-salt -hashed_password', function(err, user) {
+        done(err, user);
+      });
+    }else{
+      done(null,user);
+    }
   });
 
   // Use local strategy
@@ -229,7 +234,32 @@ module.exports = function(passport) {
     }
   ));
 
-
+  // use SAML strategy
+  
+  passport.use(new SamlStrategy(
+    {
+      entryPoint: config.strategies.saml.entryPoint,
+      issuer: config.strategies.saml.issuer ,
+      callbackUrl: config.strategies.saml.callbackUrl,
+      // privateCert:  fs.readFileSync(onfig.strategies.saml.privateCert'./cert-scripts/azeem_com.key', 'utf-8'),
+      // cert: fs.readFileSync(onfig.strategies.saml.cert './cert-scripts/adfs.ideawake_com_pk.crt', 'utf-8'),
+      // authnContext: 'http://schemas.microsoft.com/ws/2008/06/identity/authenticationmethod/password',
+      acceptedClockSkewMs: -1,
+      identifierFormat: null,
+      signatureAlgorithm: config.strategies.saml.callbackUrl.signatureAlgorithm,
+      disableRequestedAuthnContext: true
+    },
+    function(profile, done) {
+      console.log(profile);
+      return done(null,
+        {
+          upn: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'],
+          name: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
+          email: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
+          
+        });
+  })
+  );
     var db = mongoose.connection;
     var collection = db.collection('platformsettings');
     var platformSettings = {};
