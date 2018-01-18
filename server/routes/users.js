@@ -34,6 +34,8 @@ module.exports = function (MeanUser, app, circles, database, passport) {
   // AngularJS route to check for authentication
   app.route('/api/loggedin').get(users.loggedin);
 
+  // ========== SAML Endpoints =============
+
   app.route('/api/saml/login')
   .get(passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
     function (req, res) {
@@ -47,6 +49,8 @@ module.exports = function (MeanUser, app, circles, database, passport) {
       res.redirect('https://localhost:3000');
     }
   );
+
+  // =======================================
 
 
   if (config.strategies.local.enabled) {
@@ -202,25 +206,4 @@ module.exports = function (MeanUser, app, circles, database, passport) {
         failureRedirect: loginPage,
       }), users.authCallback);
   }
-
-  ///  if (config.strategies.saml.enabled) {
-  // Setting the SAML oauth routes
-  /*   app.route('/api/auth/saml')
-      .get(passport.authenticate('saml', {
-        failureRedirect: '/'
-        failureFlash: true
-      }),  function(req, res) {
-        console.log()
-        res.redirect('/');
-      });
-
-    app.route('/api/auth/saml/callback')
-      .get(passport.authenticate('saml', {
-        failureFlash: true
-      }),  function(req, res) {
-        res.redirect('/');
-      }); */
-
- 
-  //  }
 };

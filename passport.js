@@ -236,30 +236,28 @@ module.exports = function(passport) {
 
   // use SAML strategy
   
-  passport.use(new SamlStrategy(
-    {
-      entryPoint: config.strategies.saml.entryPoint,
-      issuer: config.strategies.saml.issuer ,
-      callbackUrl: config.strategies.saml.callbackUrl,
-      // privateCert:  fs.readFileSync(onfig.strategies.saml.privateCert'./cert-scripts/azeem_com.key', 'utf-8'),
-      // cert: fs.readFileSync(onfig.strategies.saml.cert './cert-scripts/adfs.ideawake_com_pk.crt', 'utf-8'),
-      // authnContext: 'http://schemas.microsoft.com/ws/2008/06/identity/authenticationmethod/password',
-      acceptedClockSkewMs: -1,
-      identifierFormat: null,
-      signatureAlgorithm: config.strategies.saml.callbackUrl.signatureAlgorithm,
-      disableRequestedAuthnContext: true
+  passport.use(new SamlStrategy({
+    entryPoint: config.strategies.saml.entryPoint,
+    issuer: config.strategies.saml.issuer ,
+    callbackUrl: config.strategies.saml.callbackUrl,
+    // TODO: confirm if the following three settings are necessary for any use-case
+    // privateCert:  fs.readFileSync(onfig.strategies.saml.privateCert'./cert-scripts/azeem_com.key', 'utf-8'),
+    // cert: fs.readFileSync(onfig.strategies.saml.cert './cert-scripts/adfs.ideawake_com_pk.crt', 'utf-8'),
+    // authnContext: 'http://schemas.microsoft.com/ws/2008/06/identity/authenticationmethod/password',
+    acceptedClockSkewMs: -1,
+    identifierFormat: null,
+    signatureAlgorithm: config.strategies.saml.callbackUrl.signatureAlgorithm,
+    disableRequestedAuthnContext: true
     },
     function(profile, done) {
-      console.log(profile);
-      return done(null,
-        {
-          upn: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'],
-          name: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
-          email: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
-          
-        });
-  })
-  );
+      return done(null, {
+        upn: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'],
+        name: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
+        email: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
+      });
+    }
+  ));
+
     var db = mongoose.connection;
     var collection = db.collection('platformsettings');
     var platformSettings = {};
