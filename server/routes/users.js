@@ -2,7 +2,9 @@
 
 var config = require('meanio').getConfig();
 var jwt = require('jsonwebtoken'); //https://npmjs.org/package/node-jsonwebtoken
-const authTokenMW = require('../../authorization').generateAuthToken;
+const MWs = require('../../authorization');
+
+const authTokenMW = MWs.generateAuthToken;
 
 var hasAuthorization = function (req, res, next) {
   if (!req.user.isAdmin || req.user._id.equals(req.user._id)) {
@@ -38,16 +40,16 @@ module.exports = function (MeanUser, app, circles, database, passport) {
   // ========== SAML Endpoints =============
 
   app.route('/api/saml/login')
-  .get(passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
-    function (req, res) {
-      res.redirect('https://localhost:3000');
-    }
-  );
+  .get(passport.authenticate('saml', {
+    failureRedirect: '/', failureFlash: true
+  }));
 
   app.route('/api/adfs/postResponse').post(
     passport.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+    MWs.SAMLAuthorization,
+    authTokenMW(MeanUser),
     function (req, res) {
-      res.redirect('https://localhost:3000');
+      res.redirect(`/saml/auth?t=${req.token}`);
     }
   );
 
