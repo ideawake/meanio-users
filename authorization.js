@@ -108,8 +108,9 @@ exports.SAMLAuthorization = function(req, res, next) {
       // to a re-usable method on the model
       let newUser = new User({
         email: req.user.upn,
+        username: req.user.upn,
         name: req.user.name,
-        adfs_metadata: req.user
+        adfs_metadata: req.user,
       });
       return newUser.save()
       .catch(err => {
