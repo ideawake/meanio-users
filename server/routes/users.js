@@ -2,6 +2,7 @@
 
 var config = require('meanio').getConfig();
 var jwt = require('jsonwebtoken'); //https://npmjs.org/package/node-jsonwebtoken
+const authTokenMW = require('../../authorization').generateAuthToken;
 
 var hasAuthorization = function (req, res, next) {
   if (!req.user.isAdmin || req.user._id.equals(req.user._id)) {
@@ -67,41 +68,19 @@ module.exports = function (MeanUser, app, circles, database, passport) {
 
     // Setting the local strategy route
     app.route('/api/login')
-      .post(passport.authenticate('local', {
-        failureFlash: false
-      }), function (req, res) {
-        var payload = req.user;
-        var escaped;
-        var token;
-        MeanUser.events.publish({
-          action: 'logged_in',
-          user: {
-            name: req.user.name
-          }
-        });
-        if (req.body.hasOwnProperty('redirect') && req.body.redirect !== false) {
-          // res.redirect(req.query.redirect);
-          var redirect = req.body.redirect;
-          payload.redirect = redirect;
-          escaped = JSON.stringify(payload);
-          escaped = encodeURI(escaped);
-          token = jwt.sign(escaped, config.secret);
+      .post(
+        passport.authenticate('local', {
+          failureFlash: false
+        }),
+        authTokenMW(MeanUser),
+        function (req, res) {
           res.json({
-            token: token,
+            token: req.token,
             user: req.user,
-            redirect: redirect
-          });
-        } else {
-          escaped = JSON.stringify(payload);
-          escaped = encodeURI(escaped);
-          token = jwt.sign(escaped, config.secret);
-          res.json({
-            token: token,
-            user: req.user,
-            redirect: config.strategies.landingPage
+            redirect: req.redirect || config.strategies.landingPage
           });
         }
-      });
+      );
   }
 
   // AngularJS route to get config of social buttons
