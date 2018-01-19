@@ -163,13 +163,20 @@ UserSchema.statics.load = function(id, cb) {
 };
 
 
-UserSchema.statics.findAndAuthenticate = function(query, password) {
+UserSchema.statics.findOneUser = function(query, resolveIfNotFound) {
   return this.findOne(query)
   .populate('userProfile')
   .exec()
   .then(user => {
-    if (!user) return Promise.reject('Unknown user');
+    return user ?
+      user : (resolveIfNotFound ? undefined : Promise.reject('Unknown user'));
+  });
+};
 
+
+UserSchema.statics.findAndAuthenticate = function(query, password) {
+  return this.findOneUser(query)
+  .then(user => {
     return user.authenticate(password) ?
       Promise.resolve(user) : Promise.reject('Invalid password');
   });
