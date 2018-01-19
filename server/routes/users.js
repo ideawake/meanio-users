@@ -56,6 +56,20 @@ module.exports = function (MeanUser, app, circles, database, passport) {
   // =======================================
 
 
+  app.route('/api/verifyToken').get(
+    (req, res) => {
+      if (req.user) {
+        res.json({
+          user: req.user,
+          redirect: req.query.redirect
+        });
+      } else {
+        res.status(401).end();
+      }
+    }
+  )
+
+
   if (config.strategies.local.enabled) {
     // Setting up the users api
     app.route('/api/register')
