@@ -8,6 +8,8 @@ var mongoose  = require('mongoose'),
   crypto    = require('crypto'),
   _   = require('lodash');
 
+const Promise = require('bluebird');
+
 /**
  * Validations
  */
@@ -158,6 +160,19 @@ UserSchema.statics.load = function(id, cb) {
   })
   .populate('userProfile')
   .exec(cb);
+};
+
+
+UserSchema.statics.findAndAuthenticate = function(query, password) {
+  return this.findOne(query)
+  .populate('userProfile')
+  .exec()
+  .then(user => {
+    if (!user) return Promise.reject('Unknown user');
+
+    return user.authenticate(password) ?
+      Promise.resolve(user) : Promise.reject('Invalid password');
+  });
 };
 
 
