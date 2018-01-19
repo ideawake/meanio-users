@@ -41,23 +41,12 @@ module.exports = function(passport) {
       passwordField: 'password'
     },
     function(email, password, done) {
-      User.findOne({
-        email: email
-      }).populate("userProfile").exec(function(err, user) {
-        if (err) {
-          return done(err);
-        }
-        if (!user) {
-          return done(null, false, {
-            message: 'Unknown user'
-          });
-        }
-        if (!user.authenticate(password)) {
-          return done(null, false, {
-            message: 'Invalid password'
-          });
-        }
-        return done(null, user);
+      User.findAndAuthenticate({email}, password)
+      .then(user => {
+        done(null, user)
+      })
+      .catch(err => {
+        typeof err === 'string' ? done(null, false, {message: err}) : done(err);
       });
     }
   ));
