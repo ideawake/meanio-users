@@ -103,15 +103,12 @@ exports.SAMLAuthorization = function(req, res, next) {
   User.findOneUser({email: req.user.upn}, true)
   .then(user => {
     if (!user) {
-      // TODO: user creation should be refactored to use one common method for creating user
-      // Current sign up logic is ther in the controller which needs to be moved out
-      // to a re-usable method on the model
-      let newUser = new User({
+      var newUser = {
         email: req.user.upn,
         name: req.user.name,
         adfs_metadata: req.user
-      });
-      return newUser.save()
+      };
+      return User.createUser(newUser)
       .catch(err => {
         console.log('Error creating user on SSO', err);
         res.json({err});
