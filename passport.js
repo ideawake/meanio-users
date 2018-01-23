@@ -239,13 +239,18 @@ module.exports = function(passport) {
     disableRequestedAuthnContext: true
   },
   function(profile, done) {
-    let names = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || [];
-    let isNamesArray = Array.isArray(names);
-    return done(null, {
-      upn: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'],
-      name: isNamesArray ? names[0] : names,
-      email: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
+    let claim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/';
+    let props = ['upn', 'name', 'emailaddress'];
+    let userProfile = {};
+    props.forEach(prop => {
+      let value = profile[claim + prop];
+      if(Array.isArray(value)){
+        userProfile[prop] = value[0];
+      } else {
+        userProfile[prop] = value;        
+      }
     });
+    return done(null, userProfile);
   }));
 
     var db = mongoose.connection;

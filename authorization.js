@@ -100,7 +100,7 @@ exports.generateAuthToken = function(MeanUser) {
 
 
 exports.SAMLAuthorization = function(req, res, next) {
-  User.findOneUser({email: req.user.upn}, true)
+  User.findOneUser({email: req.user.upn.toLowerCase()}, true)
   .then(user => {
     if (!user) {
       var newUser = {
@@ -108,19 +108,21 @@ exports.SAMLAuthorization = function(req, res, next) {
         name: req.user.name,
         adfs_metadata: req.user
       };
-      return User.createUser(newUser)
-      .catch(err => {
-        console.log('Error creating user on SSO', err);
-        res.json({err});
-        return Promise.reject(err);
-        // TODO: this error needs to be handled using a proper error response page
+       return User.createUser(newUser, function(err, user){
+        if(err){
+           throw err;
+        } else {
+          req.user =user;
+          next();
+        }
       });
     } else {
-      return user;
+      req.user =user;    
+      next()
     }
-  })
-  .then(user => {
-    req.user = user;
-    next();
+  }).catch(err => {
+    console.log('Error creating user on SSO', err);
+    res.json({err});
+    // TODO: this error needs to be handled using a proper error response page
   });
 };
