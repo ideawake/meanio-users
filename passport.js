@@ -237,16 +237,16 @@ module.exports = function(passport) {
     identifierFormat: null,
     signatureAlgorithm: config.strategies.saml.callbackUrl.signatureAlgorithm,
     disableRequestedAuthnContext: true
-    },
-    function(profile, done) {
-      let names = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || [];
-      return done(null, {
-        upn: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'],
-        name: names[0],
-        email: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
-      });
-    }
-  ));
+  },
+  function(profile, done) {
+    let names = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || [];
+    let isNamesArray = Array.isArray(names);
+    return done(null, {
+      upn: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn'],
+      name: isNamesArray ? names[0] : names,
+      email: profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
+    });
+  }));
 
     var db = mongoose.connection;
     var collection = db.collection('platformsettings');
