@@ -73,7 +73,7 @@ exports.isMongoId = function(req, res, next) {
 exports.generateAuthToken = function(MeanUser) {
   return (req, res, next) => {
     try {
-      let payload = req.user._doc;
+      let payload = _.omit(req.user._doc, ['salt', 'hashed_password']);    
       let escaped, token;
 
       if (MeanUser) {

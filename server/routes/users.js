@@ -22,15 +22,15 @@ module.exports = function (MeanUser, app, circles, database, passport) {
 
   var loginPage = config.public.loginPage;
 
-// refresh token 
-app.route('/api/refreshtoken')
-.post(MWs.validateRefreshToken,
-authTokenMW(MeanUser),
-function (req, res) {
-  res.json({
-    token: req.token
+  // refresh token 
+  app.route('/api/refreshtoken')
+  .post(MWs.validateRefreshToken,
+  authTokenMW(MeanUser),
+  function (req, res) {
+    res.json({
+      token: req.token
+    });
   });
-});
 
   app.route('/api/logout')
   // deleting refresh token
@@ -72,6 +72,7 @@ function (req, res) {
   .get(MWs.generateRefreshToken,
     (req, res) => {
       if (req.user) {
+        console.log(req.query);
         res.json({
           user: req.user,
           refreshToken : req.refreshToken,          
