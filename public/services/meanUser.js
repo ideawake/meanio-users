@@ -2,8 +2,7 @@
 
 angular.module('mean.users').factory('MeanUser', [ '$rootScope', '$http', '$location', '$stateParams',
   '$cookies', '$q', '$timeout', '$meanConfig', 'Global', 'jwtHelper',
-  function($rootScope, $http, $location, $stateParams, $cookies, $q, $timeout, $meanConfig, Global, jwtHelper) {
-
+  function($rootScope, $http, $location, $stateParams, $cookies, $q, $timeout, $meanConfig, Global, jwtHelper, localization) {
     var self;
 
     function escape(html) {
@@ -222,6 +221,7 @@ angular.module('mean.users').factory('MeanUser', [ '$rootScope', '$http', '$loca
         localStorage.removeItem('JWT');
         $rootScope.$emit('logout');
         Global.authenticate();
+        localization.changeLanguage();
       });
     };
 

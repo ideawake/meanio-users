@@ -323,6 +323,7 @@ module.exports = function(MeanUser) {
                             payload.redirect = req.body.redirect;
                          //   var escaped = JSON.stringify(payload);
                           //  escaped = encodeURI(escaped);
+
                             req.logIn(user, function(err) {
                                 if (err) { return next(err); }
     
@@ -336,7 +337,8 @@ module.exports = function(MeanUser) {
                                 });
     
                                 // We are sending the payload inside the token
-                                var token = jwt.sign(payload, config.secret, {expiresIn: config.tokenExpiry});                                
+                                var token = jwt.sign(payload, config.secret, {expiresIn: config.tokenExpiry});
+                              
                                 return res.json({
                                   token: token,
                                   redirect: config.strategies.landingPage

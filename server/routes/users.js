@@ -75,7 +75,7 @@ module.exports = function (MeanUser, app, circles, database, passport) {
         console.log(req.query);
         res.json({
           user: req.user,
-          refreshToken : req.refreshToken,          
+          refreshToken : req.refreshToken,
           redirect: req.query.redirect
         });
       } else {
@@ -209,7 +209,7 @@ module.exports = function (MeanUser, app, circles, database, passport) {
     // Setting the facebook oauth routes
     app.route('/api/auth/slack')
       .get(passport.authenticate('slack', {
-        scope: ['users:read'],
+        scope: ['users:read', 'identity.basic'],
         failureRedirect: loginPage,
       }), users.signin);
 

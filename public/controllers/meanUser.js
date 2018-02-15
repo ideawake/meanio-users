@@ -132,13 +132,13 @@ angular.module('mean.users')
   function(MeanUser, $rootScope, $sce, $location) {
     var vm = this;
     vm.user = {};
-    vm.message = 'Verifying Your request please wait...';
+    vm.message = 'Verifying your request please wait...';
     vm.params = $location.search();
     $rootScope.loading = true;
 
     $rootScope.$on('adfsTokenFailed', function(){
       localStorage.removeItem('JWT');
-      vm.erroprMessage = $sce.trustAsHtml('This link is not valid. Please go to the <a href="/">home</a> page.');
+      vm.errorMessage = $sce.trustAsHtml('This link is not valid. Please go to the <a href="/">home</a> page.');
       $rootScope.loading = false;   
     });
      /* service to verify saml token */
