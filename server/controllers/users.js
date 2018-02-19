@@ -362,7 +362,8 @@ module.exports = function(MeanUser) {
                     if (err) return next(err);
                     if(user.userProfile === null) {
                         createUserProfile(user, function(profile) {
-                            user.userProfile = profile;
+                            let cleansedProfile = _.omit(payload, ['userProfile.pointsLog']);
+                            user.userProfile = cleansedProfile;
                             res.send(user ? user : '0');
                         });
                     } else {
