@@ -96,7 +96,9 @@ module.exports = function(MeanUser) {
             /* var escaped = JSON.stringify(payload);
             escaped = encodeURI(escaped); */
             // We are sending the payload inside the token
-            var token = jwt.sign(payload, config.secret, {expiresIn: config.tokenExpiry});
+            let cleansedPayload = _.omit(payload, ['userProfile.pointsLog'])
+            console.log(cleansedPayload);
+            var token = jwt.sign(cleansedPayload, config.secret, {expiresIn: config.tokenExpiry});
             res.cookie('token', token);
 
             var destination = req.redirect || config.strategies.landingPage;
@@ -337,9 +339,10 @@ module.exports = function(MeanUser) {
                                         email: user.email
                                     }
                                 });
-                                let cleansedProfile = _.omit(payload, ['userProfile.pointsLog']);
+                                let cleansedPayload = _.omit(payload, ['userProfile.pointsLog']);
+                                console.log(cleansedPayload);
                                 // We are sending the payload inside the token
-                                var token = jwt.sign(payload, config.secret, {expiresIn: config.tokenExpiry});
+                                var token = jwt.sign(cleansedPayload, config.secret, {expiresIn: config.tokenExpiry});
                               
                                 return res.json({
                                   token: token,
@@ -381,7 +384,8 @@ module.exports = function(MeanUser) {
                     } else {
                         req.user.userProfile = cleansedProfile;
                         let toEncode = req.user && req.user._doc ? req.user._doc : req.user;
-                        let payload = _.omit(toEncode, ['salt', 'hashed_password', 'userProfile.pointsLog']);               
+                        let payload = _.omit(toEncode, ['salt', 'hashed_password', 'userProfile.pointsLog']);
+                        console.log(payload);           
                        /*  var escaped = JSON.stringify(payload);
                         escaped = encodeURI(escaped); */
                         var token = jwt.sign(payload, config.secret, {expiresIn: config.tokenExpiry});
@@ -504,6 +508,7 @@ module.exports = function(MeanUser) {
                 user.save(function(err) {
                     var payload = user && user._doc ? user._doc : user;                             
                     let cleansedUser = _.omit(payload, ['salt', 'hashed_password', 'userProfile.pointsLog']);
+                    console.log(cleansedUser);
                  /*    var escaped = JSON.stringify(user);
                         escaped = encodeURI(escaped); */
                     var token = jwt.sign(cleansedUser, config.secret, {expiresIn: config.tokenExpiry});                    
@@ -516,11 +521,11 @@ module.exports = function(MeanUser) {
                         }
                     });
 
-                    req.logIn(user, function(err) {
+                    req.logIn(cleansedUser, function(err) {
                         if (err) return next(err);
                         res.cookie('redirect', destination);
                         return res.send({
-                            user: user,
+                            user: cleansedUser,
                             token: token,
                             redirect: destination
                         });
