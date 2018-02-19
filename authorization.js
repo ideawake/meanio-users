@@ -130,7 +130,7 @@ exports.validateRefreshToken = function(req, res, next) {
       var refreshToken = req.body.refreshToken;
       if((refreshToken in refreshTokens) && (refreshTokens[refreshToken] == id)) {
         findUser(id, function(user) {
-          if (!user) return res.status(401).send('User is not authorized');
+          if (!user) return res.status(401).send('User not found in validateRefreshToken');
           req.user = user;
           next();
         });
