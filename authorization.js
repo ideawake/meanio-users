@@ -131,6 +131,7 @@ exports.validateRefreshToken = function(req, res, next) {
       if((refreshToken in refreshTokens) && (refreshTokens[refreshToken] == id)) {
         findUser(id, function(user) {
           if (!user) return res.status(401).send('User not found in validateRefreshToken');
+          console.log(user);
           req.user = user;
           next();
         });
