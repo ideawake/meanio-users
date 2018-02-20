@@ -96,7 +96,7 @@ module.exports = function(MeanUser) {
             /* var escaped = JSON.stringify(payload);
             escaped = encodeURI(escaped); */
             // We are sending the payload inside the token
-            let cleansedProfile = _.omit(payload.userProfile, ['pointsLog']);
+            let cleansedProfile = _.omit(payload.userProfile._doc ? payload.userProfile._doc : payload.userProfile, ['pointsLog']);
             payload.userProfile = cleansedProfile;
             console.log('authCallback ', payload.userProfile);
             var token = jwt.sign(payload, config.secret, {expiresIn: config.tokenExpiry});
@@ -340,7 +340,7 @@ module.exports = function(MeanUser) {
                                         email: user.email
                                     }
                                 });
-                                let cleansedPayload = _.omit(payload.userProfile, ['pointsLog']);
+                                let cleansedPayload = _.omit(payload.userProfile._doc ? payload.userProfile._doc : payload.userProfile, ['pointsLog']);
                                 console.log('createUser', cleansedPayload.userProfile);
                                 // We are sending the payload inside the token
                                 var token = jwt.sign(cleansedPayload, config.secret, {expiresIn: config.tokenExpiry});
@@ -387,7 +387,7 @@ module.exports = function(MeanUser) {
                         req.user.userProfile = cleansedProfile;
                         let toEncode = req.user && req.user._doc ? req.user._doc : req.user;
                         let payload = _.omit(toEncode, ['salt', 'hashed_password']);
-                        payload.userProfile = _.omit(payload.userProfile, ['pointsLog']);
+                        payload.userProfile = _.omit(payload.userProfile._doc ? payload.userProfile._doc : payload.userProfile, ['pointsLog']);
                         console.log('me ', payload.userProfile);           
                        /*  var escaped = JSON.stringify(payload);
                         escaped = encodeURI(escaped); */
