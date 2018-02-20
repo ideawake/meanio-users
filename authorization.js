@@ -76,7 +76,6 @@ exports.generateAuthToken = function(MeanUser) {
       let payload = _.omit(req.user._doc, ['salt', 'hashed_password']);
       let cleansedProfile = _.omit(payload.userProfile._doc ? payload.userProfile._doc : payload.userProfile, ['pointsLog']);
       payload.userProfile = cleansedProfile;
-      console.log('generateAuthToken', payload.userProfile);
       let escaped, token;
 
       if (MeanUser) {
