@@ -150,20 +150,25 @@ exports.SAMLAuthorization = function(req, res, next) {
   User.findOneUser({email: req.user.upn.toLowerCase()}, true)
   .then(user => {
     if (!user) {
-      var newUser = {
-        email: req.user.upn,
-        name: req.user.name,
-        adfs_metadata: req.user
-      };
-      req.isUserNew = true;
-      return User.createUser(newUser, function(err, user){
-        if (err) {
-           throw err;
-        } else {
-          req.user = user;
-          next();
-        }
-      });
+      Invite.findOneAndUpdate({ status: 'pending', email: req.user.upn.toLowerCase() }, { status: 'accepted' })
+        .then(invite => {
+          console.log(invite)
+          var newUser = {
+            email: req.user.upn,
+            name: req.user.name,
+            adfs_metadata: req.user,
+            roles: invite.roles
+          };
+          req.isUserNew = true;
+          return User.createUser(newUser, function(err, user){
+            if (err) {
+               throw err;
+            } else {
+              req.user = user;
+              next();
+            }
+          });
+        })
     } else {
       req.user = user;    
       next()
