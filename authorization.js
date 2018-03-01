@@ -1,6 +1,7 @@
 'use strict';
 var mongoose = require('mongoose'),
   User = mongoose.model('User'),
+  Invite = mongoose.model('Invite'),
   randtoken = require('rand-token'),
   _ = require('lodash'),
   refreshTokens = {};
