@@ -147,7 +147,7 @@ exports.validateRefreshToken = function(req, res, next) {
 
 
 exports.SAMLAuthorization = function(req, res, next) {
-  Invite = mongoose.model('Invite');
+  let Invite = mongoose.model('Invite');
   User.findOneUser({email: req.user.upn.toLowerCase()}, true)
   .then(user => {
     if (!user) {
