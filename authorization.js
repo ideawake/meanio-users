@@ -1,7 +1,6 @@
 'use strict';
 var mongoose = require('mongoose'),
   User = mongoose.model('User'),
-  Invite = mongoose.model('Invite'),
   randtoken = require('rand-token'),
   _ = require('lodash'),
   refreshTokens = {};
@@ -148,6 +147,7 @@ exports.validateRefreshToken = function(req, res, next) {
 
 
 exports.SAMLAuthorization = function(req, res, next) {
+  Invite = mongoose.model('Invite');
   User.findOneUser({email: req.user.upn.toLowerCase()}, true)
   .then(user => {
     if (!user) {

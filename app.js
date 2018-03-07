@@ -24,7 +24,7 @@ var MeanUser = new MeanUserKlass();
  * All MEAN packages require registration
  * Dependency injection is used to define required modules
  */
-MeanUser.register(function(app, database, passport, socketshelper, invites) {
+MeanUser.register(function(app, database, passport, socketshelper) {
     MeanUser.io = socketshelper.io;
     MeanUser.auth = require('./authorization');
     require('./passport')(passport);
