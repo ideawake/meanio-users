@@ -153,12 +153,10 @@ module.exports = {
                 );
               }
 
-            return teamPromise
-              .then(() => {
-                console.log('=======    updateTodoInviteToUser   called      ============')
-                  Notifications.updateTodoInviteToUser(inviteId, user._id)
-                    .then((result) => {
-                      console.log('=======    updateTodoInviteToUser   result      ============',result)
+            return Notifications.updateTodoInviteToUser(inviteId, user._id)
+                    .then(() => {
+                  return teamPromise
+                  .then(() => {
                     return {
                       user, teamIdea
                       }
