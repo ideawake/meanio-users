@@ -18,9 +18,9 @@ var mongoose = require('mongoose'),
 
 const error = require('http-errors-promise');
 require('../../../../packages/custom/invites/server/models/invite');
-require('../../../../packages/custom/notifications/server/model/notifications');
+// require('../../../../packages/custom/notifications/server/model/notifications');
 const Invite = mongoose.model('Invite');
-const Notification = mongoose.model('Notification');
+// const Notification = mongoose.model('Notification');
 
 // Temporary work-around for circular dependency
 setTimeout(() => mailer = require('../../../../services/mailer')(), 2000);
@@ -554,14 +554,14 @@ module.exports = function(MeanUser) {
                 .then(({ user, teamIdea }) => {
                     req.user = user;     
 
-                    //this should go somewhere else????
-                    Notification
-                    .findByIdAndUpdate(
-                        req.params.inviteId, 
-                        { $set: { user: user._id } }, 
-                        { upsert: true }
-                    )
-                    .exec();  
+                    // //this should go somewhere else????
+                    // Notification
+                    // .findByIdAndUpdate(
+                    //     req.params.inviteId, 
+                    //     { $set: { user: user._id } }, 
+                    //     { upsert: true }
+                    // )
+                    // .exec();  
 
                     MeanUser.events.emit('created', {
                         action: 'created',
