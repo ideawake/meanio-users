@@ -17,7 +17,7 @@ module.exports = function(UserProfiles, http) {
         if(req.user && req.user._id) {
 
             UserProfile.findOne({'user' : req.user._id})
-                .populate('user', 'name username email secondaryEmail')
+                .populate('user', 'name username email secondaryEmail roles')
                 .exec(function(err, userProfile) {
                     if (err) {
                         req.log.info(err);
