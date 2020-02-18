@@ -118,6 +118,7 @@ module.exports = {
     redeemInvite: function(inviteId, {name, defaultLanguage, password}) {
       const Invites = mongoose.model('Invite');
       const Ideas = mongoose.model('Idea');
+      const Notifications = mongoose.model('Notification');
 
       if (!inviteId) return error(null, 'Invite id is required.', 400);
 
@@ -152,10 +153,15 @@ module.exports = {
                 );
               }
 
-              return teamPromise
-                .then(() => ({
-                  user, teamIdea
-                }));
+            return Notifications.updateTodoInviteToUser(inviteId, user._id)
+                    .then(() => {
+                  return teamPromise
+                  .then(() => {
+                    return {
+                      user, teamIdea
+                      }
+                  })
+              });
             });
         });
     }
