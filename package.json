@@ -5,7 +5,7 @@
   "dependencies": {
     "angular-jwt": "^0.1.9",
     "email-templates": "^2.7.1",
-    "meanio-circles": "^0.1.x",
+    "meanio-circles": "git://github.com/ideawake/meanio-circles.git#master",
     "nodemailer": "^2.6.4",
     "passport-azure-oauth2": "^0.1.0",
     "passport-facebook": "^2.1.1",
