@@ -181,7 +181,9 @@ exports.SAMLAuthorization = function(req, res, next) {
       `No identifiable user property returned by SAML provider.`
     ));
   }
-
+  
+  console.log(email, ' is authenticating with SAML');
+  
   User.findOneUser({ email }, true)
     .then(user => {
       if (!user) {
