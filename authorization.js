@@ -185,7 +185,7 @@ exports.SAMLAuthorization = function(req, res, next) {
   if (email.includes('intranet.osfnet.org')) {
     req.log.info(`${email} is a kiosk machine. Redirecting user to /auth/kiosk-detected and aborting SAML process`);
 
-    res.redirect('/auth/kiosk-detected');
+    return res.redirect('/auth/kiosk-detected');
     // return next(new Error( `Please use Chrome or Firefox when on a kiosk computer` ));
   }
   
