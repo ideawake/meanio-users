@@ -15,10 +15,10 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
       }
     }
 
-    function clearTokensAndRedirectToLogin($location) {
+    function clearTokensAndRedirectToHomepage($location) {
       localStorage.removeItem('JWT');
       localStorage.removeItem('rft');
-      $location.url('/auth/login');
+      $location.url('/');
     }
 
     jwtInterceptorProvider.tokenGetter = ['$cookies', '$location', '$window', '$http', 'jwtHelper', function ($cookies, $location, $window, $http, jwtHelper) {
@@ -29,13 +29,18 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
 
         const queryParams = $location.search();
         if (queryParams.email === 'true' && queryParams.inviteId) {
-          sessionStorage.setItem('locationURL', $location.url());  
+          sessionStorage.setItem('locationURL', $location.url());
           $window.location.href = `auth/invite/accept/${queryParams.inviteId}`;
-        } 
+        }
 
-        const loggedOutUrls = ['/', '/signup', '/auth/login', '/forgotpassword', '/privacy', '/tos', '/contact', '/saml/auth'];
+        const kioskUrls = ['/auth/kiosk'];
+        if (!lcJwt && !_.includes(kioskUrls, $location.$$path)) {
+          return;
+        }
+
+        const loggedOutUrls = ['/', '/signup', '/auth/login', '/auth/kiosk', '/forgotpassword', '/privacy', '/tos', '/contact', '/saml/auth'];
         if (!lcJwt && !_.includes(loggedOutUrls, $location.$$path) && !$location.$$path.includes('/reset') && !$location.$$path.includes('/invite/accept')) {
-          clearTokensAndRedirectToLogin($location);
+          clearTokensAndRedirectToHomepage($location);
           return;
         }
 
@@ -44,7 +49,7 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
         } catch (err) {
           console.log('bad token, logging user out', lcJwt, rft);
           console.error(err);
-          clearTokensAndRedirectToLogin($location);
+          clearTokensAndRedirectToHomepage($location);
           return;
         }
         // The following if condistion is used to check if user has old token
@@ -54,7 +59,7 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
           && typeof user.userProfile !== 'string'
           && user.userProfile !== null
         ) {
-          clearTokensAndRedirectToLogin($location);
+          clearTokensAndRedirectToHomepage($location);
           return;
         } else if (lcJwt && rft && jwtHelper.isTokenExpired(lcJwt)) {
           return $http({
@@ -71,7 +76,7 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
             })
             .catch(function(err) {
               console.log(err);
-              clearTokensAndRedirectToLogin($location);
+              clearTokensAndRedirectToHomepage($location);
               return;
             });
 
