@@ -181,8 +181,15 @@ exports.SAMLAuthorization = function(req, res, next) {
       `No identifiable user property returned by SAML provider.`
     ));
   }
+
+  if (email.includes('intranet.osfnet.org')) {
+    req.log.info(`${email} is a kiosk machine. Redirecting user to /auth/kiosk-detected and aborting SAML process`);
+
+    res.redirect('/auth/kiosk-detected');
+    // return next(new Error( `Please use Chrome or Firefox when on a kiosk computer` ));
+  }
   
-  console.log(email, ' is authenticating with SAML');
+  req.log.info(`${email} is authenticating with SAML`);
   
   User.findOneUser({ email }, true)
     .then(user => {
