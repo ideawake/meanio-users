@@ -377,11 +377,15 @@ module.exports = function(UserProfiles, http) {
                     doc.pointsLog = [];
                 }
 
-                doc.pointsLog.push(result);
+                doc.pointsLog = doc.pointsLog.concat([result]); // pushall fix
 
                 doc.save(function(err) {
-                    socket.emit('userPoints' + req.body.userId, result);
-                    res.json(result);
+                  if (err && err.message) {
+                    req.log.info(`Error adding points to user ${err}`);
+                    return res.json({err});
+                  }
+                  socket.emit('userPoints' + req.body.userId, result);
+                  res.json(result);
                 });
 
                 //req.log.info('emitting points socket',req.body,result);
