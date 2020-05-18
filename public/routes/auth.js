@@ -15,10 +15,10 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
       }
     }
 
-    function clearTokensAndRedirectToHomepage($location) {
+    function clearTokensAndRedirectToLogin($location) {
       localStorage.removeItem('JWT');
       localStorage.removeItem('rft');
-      $location.url('/');
+      $location.url('/auth/login');
     }
 
     jwtInterceptorProvider.tokenGetter = ['$cookies', '$location', '$window', '$http', 'jwtHelper', function ($cookies, $location, $window, $http, jwtHelper) {
@@ -40,7 +40,7 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
 
         const loggedOutUrls = ['/', '/signup', '/auth/login', '/auth/kiosk', '/forgotpassword', '/privacy', '/tos', '/contact', '/saml/auth'];
         if (!lcJwt && !_.includes(loggedOutUrls, $location.$$path) && !$location.$$path.includes('/reset') && !$location.$$path.includes('/invite/accept')) {
-          clearTokensAndRedirectToHomepage($location);
+          clearTokensAndRedirectToLogin($location);
           return;
         }
 
@@ -49,7 +49,7 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
         } catch (err) {
           console.log('bad token, logging user out', lcJwt, rft);
           console.error(err);
-          clearTokensAndRedirectToHomepage($location);
+          clearTokensAndRedirectToLogin($location);
           return;
         }
         // The following if condistion is used to check if user has old token
@@ -59,7 +59,7 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
           && typeof user.userProfile !== 'string'
           && user.userProfile !== null
         ) {
-          clearTokensAndRedirectToHomepage($location);
+          clearTokensAndRedirectToLogin($location);
           return;
         } else if (lcJwt && rft && jwtHelper.isTokenExpired(lcJwt)) {
           return $http({
@@ -76,7 +76,7 @@ angular.module('mean.users').config(['$httpProvider', 'jwtInterceptorProvider',
             })
             .catch(function(err) {
               console.log(err);
-              clearTokensAndRedirectToHomepage($location);
+              clearTokensAndRedirectToLogin($location);
               return;
             });
 

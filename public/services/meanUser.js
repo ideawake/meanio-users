@@ -254,12 +254,12 @@ angular.module('mean.users').factory('MeanUser', [ '$rootScope', '$http', '$loca
           $timeout(deferred.resolve);
         // Not Authenticated
         } else {
-          console.log("No User, redirecting to homepage");
+          console.log("No User, redirecting to login page");
           $cookies.put('redirect', $location.path());
           // console.log("Cookies", $cookies.getAll());
           $timeout(deferred.reject);
           
-          $location.url('/');
+          $location.url('/auth/login');
         }
       });
 
