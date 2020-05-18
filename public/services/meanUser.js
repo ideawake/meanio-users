@@ -277,7 +277,7 @@ angular.module('mean.users').factory('MeanUser', [ '$rootScope', '$http', '$loca
         // Authenticated
         if (user !== '0') {
           $timeout(deferred.reject);
-          $location.url('/');
+          $location.url('/auth/login');
         }
         // Not Authenticated
         else $timeout(deferred.resolve);
@@ -298,7 +298,7 @@ angular.module('mean.users').factory('MeanUser', [ '$rootScope', '$http', '$loca
         // Not Authenticated or not Admin
         else {
           $timeout(deferred.reject);
-          $location.url('/');
+          $location.url('/auth/login');
         }
       });
 
