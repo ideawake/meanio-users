@@ -191,6 +191,19 @@ exports.SAMLAuthorization = function(req, res, next) {
   
   req.log.info(`${email} is authenticating with SAML`);
   
+  console.log('photo');
+  console.log(req.user.photo);
+  
+  function getName(req) {
+    if (req.user.firstname && req.user.lastname) {
+      return req.user.firstname + " " + req.user.lastname;
+    } else if (req.user.name) {
+      return req.user.name;
+    } else {      
+      return 'Unknown Name';
+    }
+  };
+
   User.findOneUser({ email }, true)
     .then(user => {
       if (!user) {
@@ -199,9 +212,10 @@ exports.SAMLAuthorization = function(req, res, next) {
           : { status: 'pending', email: email };        
         Invite.findOneAndUpdate(inviteFilters, { status: 'accepted' })
           .then(invite => {
+
             var newUser = {
               email: email,
-              name: req.user.name || 'Unknown Name',
+              name: getName(req),
               adfs_metadata: req.user,
               // Added default roles in case no invite found
               roles: invite && invite.roles ? invite.roles : ['authenticated']             
