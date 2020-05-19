@@ -189,11 +189,9 @@ exports.SAMLAuthorization = function(req, res, next) {
     // return next(new Error( `Please use Chrome or Firefox when on a kiosk computer` ));
   }
   
-  req.log.info(`${email} is authenticating with SAML`);
-  
-  console.log('photo');
-  console.log(req.user.photo);
-  
+  req.log.info(`${email} is authenticating with SAML with the following details`);
+  req.log.info(`${req.user}`);
+    
   function getName(req) {
     if (req.user.firstname && req.user.lastname) {
       return req.user.firstname + " " + req.user.lastname;
