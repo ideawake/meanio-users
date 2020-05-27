@@ -190,7 +190,7 @@ exports.SAMLAuthorization = function(req, res, next) {
   }
   
   req.log.info(`${email} is authenticating with SAML with the following details`);
-  req.log.info(`${req.user}`);
+  req.log.info(req.user);
     
   function getName(req) {
     console.log("getName req.user");
