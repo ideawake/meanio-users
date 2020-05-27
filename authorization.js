@@ -193,9 +193,11 @@ exports.SAMLAuthorization = function(req, res, next) {
   req.log.info(`${req.user}`);
     
   function getName(req) {
-    if (req.user.firstname && req.user.lastname) {
+    console.log("getName req.user");
+    console.log(req.user);
+    if (req && req.user && req.user.firstname && req.user.lastname) {
       return req.user.firstname + " " + req.user.lastname;
-    } else if (req.user.name) {
+    } else if (req && req.user && req.user.name) {
       return req.user.name;
     } else {      
       return 'Unknown Name';
@@ -236,7 +238,7 @@ exports.SAMLAuthorization = function(req, res, next) {
                 // if have invites then update user of invites after saml signup  
                 invite.user = user;
                 return invite.save()
-                  .then(result => {                    
+                  .then(() => {                    
                     next();
                   })
                   .catch(err => {

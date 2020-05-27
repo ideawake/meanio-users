@@ -56,7 +56,7 @@ module.exports = function(UserProfiles, http) {
                             User.findOne({'_id' : req.user._id}).exec(function(err, user) {
 
                                 newUserProfile.user = user;
-                                user.name = (!user.name) ? 'Unknown User' : user.name;
+                                user.name = (!user.name) ? 'Unnamed User' : user.name;
                                 newUserProfile.displayName = user.name;
                                 newUserProfile.description = user.name;
                                 newUserProfile.profileImage = {};
