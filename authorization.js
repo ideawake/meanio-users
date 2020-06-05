@@ -192,13 +192,16 @@ exports.SAMLAuthorization = function(req, res, next) {
   req.log.info(`${email} is authenticating with SAML with the following details`);
   req.log.info(req.user);
     
-  function getName(req) {
-    console.log("getName req.user");
-    console.log(req.user);
-    if (req && req.user && req.user.firstname && req.user.lastname) {
-      return req.user.firstname + " " + req.user.lastname;
-    } else if (req && req.user && req.user.name) {
-      return req.user.name;
+  function getName(user) {
+    if (user && user.name) {
+      return user.name;
+    } 
+    if (user.firstName && user.lastName) {
+      return user.firstName + " " + user.lastName;
+    }
+    
+    if (user.firstName && user.lastName) {
+      return user.firstname + " " + user.lastname;
     } else {      
       return 'Unknown Name';
     }
@@ -215,7 +218,7 @@ exports.SAMLAuthorization = function(req, res, next) {
 
             var newUser = {
               email: email,
-              name: getName(req),
+              name: getName(req.user),
               adfs_metadata: req.user,
               // Added default roles in case no invite found
               roles: invite && invite.roles ? invite.roles : ['authenticated']             
