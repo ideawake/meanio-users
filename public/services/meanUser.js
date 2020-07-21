@@ -85,7 +85,12 @@ angular.module('mean.users').factory('MeanUser', [ '$rootScope', '$http', '$loca
       if (angular.isDefined(response.refreshToken)) {
         localStorage.setItem('rft', response.refreshToken);
       }
-
+      if (angular.isDefined(response.user)) {
+        localStorage.setItem('globals', JSON.stringify(response.user));
+        setTimeout(() => {
+          localization.changeLanguage();
+        }, 1000);
+      }
       destination = angular.isDefined(response.redirect) ? response.redirect : destination;
 
       this.user = response.user || response;
@@ -234,6 +239,7 @@ angular.module('mean.users').factory('MeanUser', [ '$rootScope', '$http', '$loca
       this.isAdmin = false;
 
       $http.get('/api/logout').then(function(response) {
+        localStorage.removeItem('globals');
         localStorage.removeItem('JWT');
         $rootScope.$emit('logout');
         Global.authenticate();
