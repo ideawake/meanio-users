@@ -223,7 +223,8 @@ module.exports = function(UserProfiles, http) {
                 userProfile.save(function(err) {
                     if (err) {
                         return res.status(500).json({
-                            error: 'Cannot update the userProfile'
+                            error: 'Cannot update the userProfile',
+                            errorFull: err,
                         });
                     }
 
